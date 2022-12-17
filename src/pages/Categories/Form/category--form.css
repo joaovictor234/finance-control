@@ -1,0 +1,24 @@
+.form--addCategory {
+  display: flex;
+}
+.form--addCategory > div > input {
+  border-style: none;
+  border-bottom: 1px solid rgba(0,0,0,.4);
+  width: 90%;
+  margin-right: 10px;
+  font-size: 24px;
+  height: 30px;
+  opacity: 0.7;
+}
+.form--addCategory > div > input:focus {
+  outline: none;
+}
+.form--addCategory > button {
+  width: 15%;
+  height: 40px;
+  font-size: 1rem;
+  border-style: none;
+  background-color: #5CA8DA;
+  border-radius: 7px;
+  color: #fff;
+}

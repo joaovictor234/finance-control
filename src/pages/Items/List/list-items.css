@@ -1,0 +1,16 @@
+.listItem--date {
+  text-align: start;
+  margin: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(0,0,0,.2);
+}
+.items--filter__container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 20px;
+  font-size: 18px;
+}
+.items--filter__container > p {
+  margin: 10px;
+}

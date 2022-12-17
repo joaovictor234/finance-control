@@ -1,0 +1,68 @@
+.category--container {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+  border-left: 5px solid #5CA8DA;
+  border-top: 1px solid rgba(0,0,0,.3);
+  border-right: 1px solid rgba(0,0,0,.3);
+  border-bottom: 1px solid rgba(0,0,0,.3);
+  border-radius: 10px;
+}
+.category--container > div {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 8px;
+}
+.category--name {
+  margin: 8px;
+  font-size: 1.1rem;
+  text-align: left;
+}
+.category--value {
+  margin: 5px;
+  font-size: 17px;
+  font-weight: 500;
+  text-align: left;
+}
+.edit--category {
+  margin: 8px;
+  font-size: 1.1rem;
+  border-style: none;
+  border-bottom: 1px solid rgba(0,0,0,.3);
+}
+.category--percentage {
+  width: 18%;
+  font-size: 1.1rem;
+  border-style: none;
+  border-left: 1px solid rgba(0,0,0,.3);
+  padding: 0 5px;
+  background-color: transparent;
+}
+.category--percantage__iszero {
+  border: 1px solid #D6675A;
+}
+.category--options {
+  display: flex;
+  width: 74%;
+  margin-top: -11px;
+  margin-left: 18px;
+  margin-bottom: -11px;
+}
+.category--button {
+  padding: 8px;
+  margin: 3px 10px;
+  border-radius: 20px;
+  border-style: none;
+}
+.button--edit {
+  background-color: #FFEE4A;
+}
+.button--delete {
+  background-color: #D6675A;
+  color: #fff;
+}
+.option--icon {
+  margin-right: 5px;
+}

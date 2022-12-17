@@ -1,0 +1,36 @@
+.menu--container {
+  position: absolute;
+  margin-top: 255px;
+  background-color: #5CA8DA;
+  color: #fff;
+  width: 100%;
+  margin-left: -20px;
+  z-index: 1;
+}
+.menu--list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 20px;
+}
+.menu--item {
+  list-style: none;
+  padding: 5px;
+  font-size: 20px;
+  width: 90%;
+  text-align: left;
+  border-radius: 20px;
+  padding: 5px 10px;
+}
+.menu--item:hover {
+  background-color: #fff;
+  color: #333;
+}
+.menu--icon {
+  margin-right: 20px;
+}
+.menu--link {
+  text-decoration: none;
+  color: #fff;
+  width: 100%;
+}
