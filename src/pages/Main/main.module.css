@@ -1,0 +1,21 @@
+.home {
+  display: flex;
+}
+main {
+  display: flex;
+  flex-direction: column;
+}
+.content {
+  display: flex;
+  height: 80%;
+}
+.general_information {
+  margin: 22px 10px;
+  padding: 5px 20px;
+  border-radius: 20px;
+  background-color: rgba(92, 168, 218, .1);
+}
+.categories_data {
+  display: flex;
+  align-items: center;
+}

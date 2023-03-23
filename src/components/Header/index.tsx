@@ -1,32 +1,24 @@
-import { useState } from 'react';
-import { Menu } from '../Menu';
-import './header.css';
+import styles from './header.module.css';
 
-interface IHeader {
-  pageTitle: string
-}
-
-export const Header = ({ pageTitle }: IHeader) => {
-  const [showMenu, setShowMenu] = useState(false);
+export const Header = () => {
 
   return (
-    <div className='header--container'>
-      <div>
-        {showMenu ?
-          <i 
-            className="fa-solid fa-xmark header--menu__icon close--icon"
-            onClick={() => setShowMenu(false)}/> :
-          <i
-            className="fa-solid fa-bars header--menu__icon"
-            onClick={() => setShowMenu(true)} />
-        }
+    <div className={styles.container}>
+      <h1>Overview</h1>
+      <div className={styles.profile}>
+        <div className={styles.search}>
+          <p>Search</p>
+          <i className="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <i className="fa-solid fa-bell"></i>
+        <div className={styles.user}>
+          <div>
+            <i className="fa-solid fa-user"></i>
+          </div>
+          <p>Standard User</p>
+          <i className="fa-solid fa-angle-down"></i>
+        </div>
       </div>
-      {
-        showMenu &&
-        <Menu/>
-      }
-      <h3 className='header--title'>{pageTitle}</h3>
-      <div></div>
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { useContext } from "react"
 import { CategoryContextType } from "../../@types/category"
 import { MoneyContextType } from "../../@types/money"
-import { Header } from "../../components/Header"
 import { CategoryContext } from "../../context/categoryContext"
 import { MoneyContext } from "../../context/moneyContext"
 import { formatMoneyToBRL } from "../../services/formatMoney"
@@ -16,7 +15,6 @@ export const Table = () => {
   
   return (
     <div>
-      <Header pageTitle="General Table"/>
       <table>
         <thead>
           <tr>

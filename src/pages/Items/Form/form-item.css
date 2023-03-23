@@ -1,23 +1,28 @@
 .addItem--container {
   display: flex;
   flex-direction: column;
-  border-top: 30px solid #5CA8DA;
   position: fixed;
-  bottom: 0;
-  width: 100%;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  background-color: #fff;
-  transition: 2s;
+  top: 10px;
+  left: 50%;
+  transform: translate(-50%);
+  width: 400px;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  transition: .5s;
+  position: fixed;
+}
+.down_container {
+  animation-name: move_down;
+  animation-duration: 1s;
+}
+.up_container {
+  animation-name: move_up;
+  animation-duration: 1s;
 }
 .addItem--header {
   display: flex;
   justify-content: space-around;
   align-items: center;
-}
-.addItem--header > button {
-  border-style: none;
-  background-color: #fff;
 }
 .addItem--close {
   font-size: 25px;
@@ -45,30 +50,73 @@
   border-style: none;
   border-bottom: 1px solid rgba(0,0,0,0.4);
 }
-.addItem--field:focus {
-  outline: none;
-}
-.addItem--button {
-  margin: 10px 20px;
-  font-size: 20px;
+.form_buttons {
   padding: 10px;
-  border-radius: 20px;
-  background-color: #5CA8DA;
-  color: #fff;
-  border-style: none;
+  display: flex;
+  justify-content: flex-end;
+  margin: 5px 12px;
+}
+.form_buttons button {
+  padding: 5px 20px;
+  margin-left: 20px;
+  transition: .3s;
+  cursor: pointer;
 }
 .disabled {
   background-color: #C5C6C7;
 }
-.add--item__button {
-  width: 60px;
-  height: 60px;
-  font-size: 2rem;
-  border-style: none;
-  border-radius: 50%;
+.add {
   background-color: #5CA8DA;
   color: #fff;
+}
+.close {
+  background-color: #FFEE4A;
+}
+.delete {
+  background-color: #D6675A;
+  color: #fff;
+}
+@keyframes move_down {
+  0% { top: -400px }
+  100% { top: 10px }
+}
+@keyframes move_up {
+  0% { top: 10px }
+  100% { top: -400px }
+}
+.message {
   position: fixed;
-  bottom: 25px;
-  right: 25px;
+  top: 350px;
+  left: 50%;
+  transform: translate(-50%);
+  background-color: #6DC75E;
+  color: #fff;
+}
+.message div {
+  display: flex;
+}
+.message p {
+  margin: 0;
+  padding: 5px 60px;
+}
+.message button {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 10px;
+  margin-right: 10px;
+}
+.progress {
+  background-color: #28BA22;
+  height: 5px;
+  animation-name: progress_down;
+  animation-duration: 5s;
+}
+@keyframes progress_down {
+  0% { width: 100% }
+  20% { width: 80% }
+  40% { width: 60% }
+  60% { width: 40% }
+  80% { width: 20% }
+  100% { width: 0% }
 }

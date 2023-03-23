@@ -2,5 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 export type MoneyContextType = {
   money: number;
-  setMoney: Dispatch<SetStateAction<number>>
+  remainingAmount: number;
+  setMoney: Dispatch<SetStateAction<number>>;
+  setRemainingAmount: Dispatch<SetStateAction<number>>;
 }

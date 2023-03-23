@@ -5,6 +5,7 @@ import MoneyProvider from './context/moneyContext';
 import { MainRouter } from './routes/root';
 
 function App() {
+
   return (
     <div className="App">
       <MoneyProvider>

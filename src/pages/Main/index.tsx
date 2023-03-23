@@ -1,15 +1,32 @@
-import { Link } from "react-router-dom"
+import CategoriesPieChart from "../../components/CategoriesPieChart";
+import Goals from "../../components/Goals";
 import { Header } from "../../components/Header";
-import './main.css';
+import ItemsChartBar from "../../components/ItemsChartBar";
+import { Menu } from "../../components/Menu";
+import { Items } from "../Items";
+import { Table } from "../Table";
+import styles from './main.module.css';
 
 export const Main = () => {
   return (
-    <main>
-      <Header pageTitle="Main Page"/>
-      <p>Finance Control</p>
-      <Link to='/add-money'>
-        <button className="main--button">Create a new Finance Control</button>
-      </Link>
-    </main>  
+    <div className={styles.home}>
+      <Menu />
+      <main>
+        <Header />
+        <div className={styles.content}>
+          <Items />
+          <div className={styles.general_information}>
+            <div className={styles.categories_data}>
+              <Table />
+              <CategoriesPieChart />
+            </div>
+            <div>
+              <ItemsChartBar />
+            </div>
+          </div>
+          <Goals />
+        </div>
+      </main>
+    </div>
   )
 }

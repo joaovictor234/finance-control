@@ -32,7 +32,7 @@ export const CategoriesList = ({ categories, setCategories }: ICategoriesList) =
     setAllDataIsValid((!thereNumber0 && sumPercentages === 100));
 
     setSumPercentages(sum);
-  }, [categories, sumPercentages]);
+  }, [categories, sumPercentages, openCards, thereNumber0]);
 
   return (
     <>

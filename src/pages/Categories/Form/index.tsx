@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
+import { ChangeEvent, Dispatch, FormEvent, SetStateAction, useState } from "react"
 import { Category } from "../../../@types/category";
 import { v1 } from 'uuid';
 import './category--form.css';
@@ -17,7 +17,8 @@ export const CategoryForm = ({ categories, setCategories }: ICategoryForm) => {
     if (event.target.value.length <= 20) setValue(event.target.value)
   }
 
-  const addNewCategory = () => {
+  const addNewCategory = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     setInputOnFocus(false);
     if (value !== '') {
       let newCategory: Category = {
@@ -37,7 +38,7 @@ export const CategoryForm = ({ categories, setCategories }: ICategoryForm) => {
 
     <div className="container">
       <p className="legend">Create a new category</p>
-      <div className="form--addCategory">
+      <form className="form--addCategory" onSubmit={addNewCategory}>
         <div>
           <input
             type="text"
@@ -51,8 +52,8 @@ export const CategoryForm = ({ categories, setCategories }: ICategoryForm) => {
             <p className="warning">the category have {value.length}/20 characters</p>
           }
         </div>
-        <button onClick={addNewCategory}>ADD</button>
-      </div>
+        <button>ADD</button>
+      </form>
     </div>
   )
 }

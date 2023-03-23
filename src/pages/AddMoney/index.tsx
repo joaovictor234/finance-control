@@ -1,7 +1,6 @@
 import { ChangeEvent, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { MoneyContextType } from "../../@types/money";
-import { Header } from "../../components/Header"
 import { MoneyContext } from "../../context/moneyContext";
 import { formatMoneyToBRL } from "../../services/formatMoney";
 import './add-money.css';
@@ -25,7 +24,6 @@ export const AddMoney = () => {
 
   return (
     <div>
-      <Header pageTitle="Add Money" />
       <p className="legend">What's the value you want do add?</p>
       <div className="form">
         <input
