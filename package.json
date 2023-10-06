@@ -1,49 +1,57 @@
 {
   "name": "finance-control",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.0",
-    "@types/react": "^18.0.23",
-    "@types/react-dom": "^18.0.7",
-    "react": "^18.2.0",
-    "react-chartjs-2": "^5.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.4.2",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.8.4",
-    "uuid": "^9.0.0",
-    "web-vitals": "^2.1.4"
-  },
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "@expo/vector-icons": "^13.0.0",
+    "@react-native-async-storage/async-storage": "1.18.2",
+    "@react-native-community/datetimepicker": "7.2.0",
+    "@react-native-firebase/app": "^18.3.2",
+    "@react-native-firebase/auth": "^18.3.2",
+    "@react-native-picker/picker": "2.4.10",
+    "@react-navigation/bottom-tabs": "^6.5.8",
+    "@react-navigation/drawer": "^6.6.3",
+    "@react-navigation/native": "^6.1.6",
+    "@react-navigation/stack": "^6.3.16",
+    "axios": "^1.5.0",
+    "expo": "^49.0.9",
+    "expo-cli": "^6.3.10",
+    "expo-dev-client": "~2.4.11",
+    "expo-status-bar": "~1.6.0",
+    "firebase": "^10.3.1",
+    "global": "^4.4.0",
+    "immutability-helper": "^3.1.1",
+    "lodash": "^4.17.21",
+    "npx": "^10.2.2",
+    "react": "18.2.0",
+    "react-native": "0.72.5",
+    "react-native-chart-kit": "^6.12.0",
+    "react-native-charts-wrapper": "^0.5.11",
+    "react-native-gesture-handler": "~2.12.0",
+    "react-native-get-random-values": "~1.9.0",
+    "react-native-masked-text": "^1.13.0",
+    "react-native-reanimated": "~3.3.0",
+    "react-native-safe-area-context": "4.6.3",
+    "react-native-screens": "~3.22.0",
+    "react-native-svg": "13.9.0",
+    "upgrade": "^1.1.0",
+    "uuid": "^9.0.0"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "@types/react": "~18.0.14",
+    "@types/react-native": "^0.72.2",
+    "@types/react-native-charts-wrapper": "^0.5.6",
+    "typescript": "^4.9.4"
   },
-  "devDependecies": {
-    "@types/uuid": "^8.3.4"
+  "private": true,
+  "resolutions": {
+    "@expo/cli": "^6.3.10"
   }
 }

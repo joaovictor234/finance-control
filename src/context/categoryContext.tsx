@@ -1,63 +1,136 @@
-import { createContext, useContext, useState } from "react";
-import { Category, CategoryContextType } from "../@types/category";
-import { MoneyContextType } from "../@types/money";
-import { Props } from "../@types/props";
-import { MoneyContext } from "./moneyContext";
+import { createContext, useEffect, useState } from "react";
+import { CategoryContextType } from "../@types/CategoryContextType";
+import { Category } from "../models/Category";
+import { CATEGORY_COLORS } from "../constants/colors";
+import { ICONS } from "../constants/icons";
+import { ContextProps } from "../interface/ContextProps";
 
 export const CategoryContext = createContext<CategoryContextType | null>(null);
 
-const CategoryProvider = ({children}: Props) => {
-  const { money } = useContext(MoneyContext) as MoneyContextType;
-  const [category, setCategory] = useState<Category | null>(null);
-  const [categories, setCategories] = useState<Category[]>([
-    {
-      id: '0',
-      name: 'Lazer',
-      percentage: 19,
-      amountSpent: 0,
-      remainingAmount: 200,
-      value: money * 19 / 100
-    },
-    {
-      id: '1',
-      name: 'Passagem',
-      percentage: 11,
-      amountSpent: 0,
-      remainingAmount: 200,
-      value: money * 11 / 100
-    },
-    {
-      id: '2',
-      name: 'Estudo',
-      percentage: 11,
-      amountSpent: 0,
-      remainingAmount: 200,
-      value: money * 11 / 100
-    },
-    {
-      id: '3',
-      name: 'Necessidade',
-      percentage: 19,
-      amountSpent: 0,
-      remainingAmount: 200,
-      value: money * 19 / 100
-    },
-    {
-      id: '4',
-      name: 'Investimento',
-      percentage: 40,
-      amountSpent: 0,
-      remainingAmount: 200,
-      value: money * 40 / 100
+const CategoryContextProvider = ({ children }: ContextProps) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [colors, setColors] = useState<string[]>(
+    Object.values(CATEGORY_COLORS)
+  );
+  const [usedColors, setUsedColors] = useState<string[]>([]);
+  const [icons, setIcons] = useState<string[]>(Object.values(ICONS));
+  const [usedIcons, setUsedIcons] = useState<string[]>([]);
+
+  const addCategory = (category: Category) => {
+    const notUsedColors = colors.filter((color) => color !== category.color);
+    setColors(notUsedColors);
+    setUsedColors((currColors) => [...currColors, category.color]);
+
+    const notUsedIcons = icons.filter((icon) => icon !== category.icon);
+    setIcons(notUsedIcons);
+    setUsedIcons((currIcons) => [...currIcons, category.icon]);
+    setCategories((currCategories) => [...currCategories, category]);
+  };
+
+  const addCategories = (c: Category[]) => {
+    setCategories(c)
+  }
+
+  const removeCategory = (id: string) => {
+    const [removedCategory] = categories.filter(
+      (category) => category.id === id
+    );
+
+    const notRemovedColors = [...usedColors];
+    const [removedColor] = notRemovedColors.splice(
+      notRemovedColors.indexOf(removedCategory.color),
+      1
+    );
+    setColors((currColors) => [...currColors, removedColor]);
+    setUsedColors(notRemovedColors);
+
+    const notRemovedIcons = [...usedIcons];
+    const [removedIcon] = notRemovedIcons.splice(
+      notRemovedIcons.indexOf(removedCategory.icon),
+      1
+    );
+    setIcons((currIcons) => [...currIcons, removedIcon]);
+    setUsedIcons(notRemovedIcons);
+
+    const filteredCategories = categories.filter(
+      (category) => category.id !== id
+    );
+    if (filteredCategories) {
+      setCategories(filteredCategories);
     }
-  ]);
+  };
+
+  const updateCategory = (updatedCategory: Category) => {
+    const updatedCategories = categories.map((category) => {
+      if (category.id === updatedCategory.id) {
+        if (category.color !== updatedCategory.color) {
+          const filteredUsedColors = usedColors.filter(
+            (color) => color !== category.color
+          );
+          const filteredColors = colors.filter(
+            (color) => color !== updatedCategory.color
+          );
+          setUsedColors([...filteredUsedColors, updatedCategory.color]);
+          setColors([...filteredColors, category.color]);
+        }
+        if (category.icon !== updatedCategory.icon) {
+          const filteredUsedIcons = usedIcons.filter(
+            (icon) => icon !== category.icon
+          );
+          const filteredIcons = icons.filter(
+            (icon) => icon !== updatedCategory.icon
+          );
+          setUsedIcons([...filteredUsedIcons, updatedCategory.icon]);
+          setIcons([...filteredIcons, category.icon]);
+        }
+        return updatedCategory;
+      } else return category;
+    });
+    setCategories(updatedCategories);
+  };
+
+  const calculateTotalPercentage = () => {
+    const totalPercentage = categories.reduce(
+      (acc, category) => acc + category.percentage,
+      0
+    );
+    return totalPercentage * 100;
+  };
+
+  const calculateTotalValue = () => {
+    const totalValue = categories.reduce(
+      (acc, category) => acc + category.totalValue,
+      0
+    );
+    return totalValue;
+  };
+
+  const calculateTotalRemaining = () => {
+    const totalRemaining = categories.reduce(
+      (acc, category) => acc + category.totalRemaining,
+      0
+    );
+    return totalRemaining;
+  };
+
+  const value = {
+    icons,
+    colors,
+    categories,
+    addCategory,
+    addCategories,
+    removeCategory,
+    updateCategory,
+    calculateTotalValue,
+    calculateTotalPercentage,
+    calculateTotalRemaining,
+  };
 
   return (
-    <CategoryContext.Provider
-      value={{category, setCategory, categories, setCategories}}>
+    <CategoryContext.Provider value={value}>
       {children}
-    </CategoryContext.Provider>  
-  )
-}
+    </CategoryContext.Provider>
+  );
+};
 
-export default CategoryProvider;
+export default CategoryContextProvider;
