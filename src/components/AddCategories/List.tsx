@@ -20,10 +20,20 @@ import { MoneyContext } from "../../context/MoneyContext";
 import { MoneyContextType } from "../../@types/MoneyContextType";
 import { ItemContext } from "../../context/ItemContext";
 import { ItemContextType } from "../../@types/ItemContextType";
+import { AuthContext } from "../../context/AuthContext";
+import { AuthContextType } from "../../@types/AuthContextType";
+import Loading from "../UI/Loading";
+import { idGenerator } from "../../utils/idGenerator";
+import { Category } from "../../models/Category";
 
 const AddCategoriesList = () => {
-  const { categories, calculateTotalPercentage, calculateTotalValue } =
-    useContext(CategoryContext) as CategoryContextType;
+  const { userFirestoreToken } = useContext(AuthContext) as AuthContextType;
+  const {
+    categories,
+    calculateTotalPercentage,
+    calculateTotalValue,
+    addCategories,
+  } = useContext(CategoryContext) as CategoryContextType;
   const { items } = useContext(ItemContext) as ItemContextType;
   const { money } = useContext(MoneyContext) as MoneyContextType;
   const [selectedCategoryCardToEditId, setSelectedCategoryCardToEditId] =
@@ -33,6 +43,7 @@ const AddCategoriesList = () => {
     totalCategoriesValues: 0,
   });
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const [loading, setLoading] = useState(false);
 
   const selectCategoryCardToEditHandle = (id: string) => {
     setSelectedCategoryCardToEditId(id);
@@ -40,15 +51,31 @@ const AddCategoriesList = () => {
 
   const saveCategories = async () => {
     try {
-      const userRef = doc(FIREBASE_DB, "users", "7yg3Kubl2ckrNOnW31EF");
-      await updateDoc(userRef, getMonthDatabase(), {
-        categories: categories,
+      setLoading(true);
+      const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
+      const total: Category = {
+        id: idGenerator(),
+        name: "Total",
+        icon: "cube",
+        color: "#eee",
+        percentage: 1,
+        totalValue: money,
+        totalRemaining: money,
+      };
+      const monthData = {
         money,
-        items
+        items,
+        categories: [total, ...categories],
+      };
+      await updateDoc(userDocRef, {
+        [`data.${getMonthDatabase()}`]: monthData,
       });
+      addCategories([total, ...categories]);
       navigation.navigate("Main");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -81,15 +108,21 @@ const AddCategoriesList = () => {
           )}
         </Text>
       </View>
-      <Button
-        title=""
-        onPress={saveCategories}
-        disabled={!(sumPercentagesAndValues.totalCategoriesPercentages === 100)}
-      >
-        {sumPercentagesAndValues.totalCategoriesPercentages === 100
-          ? "FINALIZAR"
-          : "A soma das porcentagens deve ser de 100%"}
-      </Button>
+      {loading ? (
+        <Loading message="Registrando" />
+      ) : (
+        <Button
+          title=""
+          onPress={saveCategories}
+          disabled={
+            !(sumPercentagesAndValues.totalCategoriesPercentages === 100)
+          }
+        >
+          {sumPercentagesAndValues.totalCategoriesPercentages === 100
+            ? "FINALIZAR"
+            : "A soma das porcentagens deve ser de 100%"}
+        </Button>
+      )}
     </View>
   );
 };

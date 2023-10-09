@@ -16,15 +16,21 @@ import { CategoryContext } from "../context/CategoryContext";
 import { CategoryContextType } from "../@types/CategoryContextType";
 import { ItemContext } from "../context/ItemContext";
 import { ItemContextType } from "../@types/ItemContextType";
+import { AuthContext } from "../context/AuthContext";
+import { AuthContextType } from "../@types/AuthContextType";
+import { queryUserFirestoreToken } from "../services/queryUserFirestoreToken";
+import Loading from "../components/UI/Loading";
 
 const AddMoney = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const { userFirestoreToken } = useContext(AuthContext) as AuthContextType;
   const moneyCtx = useContext(MoneyContext) as MoneyContextType;
   const { items } = useContext(ItemContext) as ItemContextType;
   const { categories } = useContext(CategoryContext) as CategoryContextType;
 
   const [money, setMoney] = useState(moneyCtx.money);
   const [moneyGreaterThanOne, setMoneyGreaterThanOne] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const changeMoneyHandler = (value: string) => {
     const BRLMoney = formatToRawValue(value);
@@ -33,16 +39,22 @@ const AddMoney = () => {
 
   const addMoney = async () => {
     try {
-      const userRef = doc(FIREBASE_DB, "users", "7yg3Kubl2ckrNOnW31EF");
-      await updateDoc(userRef, getMonthDatabase(), {
-        money,
+      setLoading(true);
+      const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
+      const monthData = {
+        money: money,
         items,
         categories,
+      };
+      await updateDoc(userDocRef, {
+        [`data.${getMonthDatabase()}`]: monthData,
       });
       moneyCtx.addMoney(money);
       navigation.navigate("AddCategories");
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,13 +72,17 @@ const AddMoney = () => {
         value={formatToBRL(money)}
         keyboardType="decimal-pad"
       />
-      <Button
-        onPress={moneyGreaterThanOne ? addMoney : () => {}}
-        title=""
-        disabled={!moneyGreaterThanOne}
-      >
-        ADICIONAR
-      </Button>
+      {loading ? (
+        <Loading message="Registrando" />
+      ) : (
+        <Button
+          onPress={moneyGreaterThanOne ? addMoney : () => {}}
+          title=""
+          disabled={!moneyGreaterThanOne}
+        >
+          ADICIONAR
+        </Button>
+      )}
     </View>
   );
 };

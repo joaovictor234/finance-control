@@ -19,7 +19,15 @@ import Button from "../UI/Button";
 import { COLORS } from "../../constants/colors";
 
 import { FIREBASE_APP, FIREBASE_DB } from "../../auth/firebaseConfig";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { getMonthDatabase } from "../../utils/getMonthDatabase";
 import { MoneyContext } from "../../context/MoneyContext";
 import { MoneyContextType } from "../../@types/MoneyContextType";
@@ -28,6 +36,8 @@ import { CategoryContextType } from "../../@types/CategoryContextType";
 import { ItemContext } from "../../context/ItemContext";
 import { ItemContextType } from "../../@types/ItemContextType";
 import { Item } from "../../models/Item";
+import { queryUserFirestoreToken } from "../../services/queryUserFirestoreToken";
+import { updateUserFirestore } from "../../services/updateUserFirestore";
 
 interface AuthFormProp {
   authType: "login" | "signup";
@@ -51,37 +61,32 @@ const AuthForm = ({ authType }: AuthFormProp) => {
     } else {
       const token = await authCtx.login(email, password);
       try {
-        const docRef = doc(FIREBASE_DB, "users", token);
-        const docSnap = await getDoc(docRef);
-        const monthCollection = getMonthDatabase();
-        if (docSnap.exists()) {
-          if (docSnap.data()[monthCollection]) {
-            const userData = docSnap.data()[monthCollection];
-            addMoney(userData.money);
-            addCategories(userData.categories);
-            const items = userData.items.map((item: Item): Item => {
-              return {
-                id: item.id,
-                category: item.category,
-                description: item.description,
-                value: item.value,
-                data: new Date(item.data),
-              };
-            });
-            addItems(items);
-            if (userData.money !== 0 && userData.categories.length !== 0) {
-              navigation.navigate("Main");
-            } else {
+        const userFirebaseToken = await queryUserFirestoreToken(token);
+        const userRef = doc(FIREBASE_DB, "users", userFirebaseToken);
+        const userSnapshot = await getDoc(userRef);
+        if (userSnapshot.exists()) {
+          if (userSnapshot.data().data[getMonthDatabase()]) {
+            const monthData = userSnapshot.data().data[getMonthDatabase()];
+            addMoney(monthData.money);
+            addCategories(monthData.categories);
+            addItems(monthData.items);
+            if (monthData.money === 0 || monthData.categories.length === 0) {
               navigation.navigate("AddMoney");
+            } else {
+              navigation.navigate("Main");
             }
           } else {
-            await setDoc(doc(FIREBASE_DB, "users", token), {
-              [monthCollection]: {
-                money: 0,
-                items: [],
-                categories: [],
+            await setDoc(
+              userRef,
+              {
+                [getMonthDatabase()]: {
+                  money: 0,
+                  categories: [],
+                  items: [],
+                },
               },
-            });
+              { merge: true }
+            );
             navigation.navigate("AddMoney");
           }
         }
@@ -94,10 +99,10 @@ const AuthForm = ({ authType }: AuthFormProp) => {
     setLoading(false);
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     setEmail("");
     setPassword("");
-  }, [authType]);
+  }, [authType]); */
 
   if (loading)
     return (
@@ -147,7 +152,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 4,
     borderTopLeftRadius: 0,
-    borderTopRightRadius: 0
+    borderTopRightRadius: 0,
   },
   label: {
     fontSize: 16,

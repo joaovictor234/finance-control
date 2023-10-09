@@ -5,6 +5,7 @@ import { CategoryContext } from "./CategoryContext";
 import { CategoryContextType } from "../@types/CategoryContextType";
 import { Category } from "../models/Category";
 import { ContextProps } from "../interface/ContextProps";
+import { sortItemsByData } from "../utils/sortItemsByData";
 
 export const ItemContext = createContext<ItemContextType | null>(null);
 
@@ -14,20 +15,32 @@ const ItemContextProvider = ({ children }: ContextProps) => {
     CategoryContext
   ) as CategoryContextType;
 
-  const addItem = (newItem: Item) => {
+  const addItem = (newItem: Item): Category => {
     setItems((currItems) => [newItem, ...currItems]);
     const [category] = categories.filter(
       (category) => category.name === newItem.category
+    );
+    const [totalCategory] = categories.filter(
+      (category) => category.name === "Total"
     );
     const updatedCategory: Category = {
       ...category,
       totalRemaining: category.totalRemaining - newItem.value,
     };
+    console.log("updatedCategory: ", updatedCategory);
+    const updatedTotalCategory: Category = {
+      ...totalCategory,
+      totalRemaining:
+        totalCategory.totalRemaining + updatedCategory.totalRemaining,
+    };
+    console.log("updatedTotalCategory: ", updatedTotalCategory);
     updateCategory(updatedCategory);
+    updateCategory(updatedTotalCategory);
+    return updatedCategory;
   };
 
   const addItems = (i: Item[]) => {
-    setItems(i);
+    setItems(sortItemsByData(i));
   };
 
   const removeItem = (id: string) => {

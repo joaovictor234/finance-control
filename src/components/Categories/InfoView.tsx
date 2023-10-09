@@ -1,11 +1,12 @@
-import { useContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { CategoryContext } from "../../context/CategoryContext";
-import { CategoryContextType } from "../../@types/CategoryContextType";
 import CategoryItem from "./CategoryItem";
+import { Category } from "../../models/Category";
 
-const InfoView = () => {
-  const { categories } = useContext(CategoryContext) as CategoryContextType;
+interface CategoryInfoViewProps {
+  categories: Category[];
+}
+
+const CategoryInfoView = ({categories}: CategoryInfoViewProps) => {
 
   return (
     <View style={styles.info}>
@@ -18,11 +19,11 @@ const InfoView = () => {
   );
 };
 
-export default InfoView;
+export default CategoryInfoView;
 
 const styles = StyleSheet.create({
   info: {
     marginTop: 10,
-    marginBottom: 20
-  }
-})
+    marginBottom: 20,
+  },
+});

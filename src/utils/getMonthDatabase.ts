@@ -13,6 +13,10 @@ const months = [
   "dec",
 ];
 
-export const getMonthDatabase = (): string => {
-  return `${months[new Date().getMonth()]}${new Date().getFullYear()}`;
+export const getMonthDatabase = (date?: Date): string => {
+  if(date) {
+    return `${months[date.getMonth()]}${date.getFullYear()}`;
+  } else {
+    return `${months[new Date().getMonth()]}${new Date().getFullYear()}`;
+  }
 };

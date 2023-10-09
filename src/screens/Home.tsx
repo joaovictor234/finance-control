@@ -10,7 +10,7 @@ const Home = () => {
       <MonthChanger />
       <Currency />
       <LastItemsAdded />
-      <MonthlyOverview />
+      {/* <MonthlyOverview /> */}
     </View>
   );
 };

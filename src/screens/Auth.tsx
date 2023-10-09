@@ -5,17 +5,89 @@ import { AuthContext } from "../context/AuthContext";
 import { AuthContextType } from "../@types/AuthContextType";
 import Loading from "../components/UI/Loading";
 import { COLORS } from "../constants/colors";
+import { FIREBASE_DB } from "../auth/firebaseConfig";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { getMonthDatabase } from "../utils/getMonthDatabase";
+import { MoneyContext } from "../context/MoneyContext";
+import { MoneyContextType } from "../@types/MoneyContextType";
+import { CategoryContext } from "../context/CategoryContext";
+import { CategoryContextType } from "../@types/CategoryContextType";
+import { ItemContext } from "../context/ItemContext";
+import { ItemContextType } from "../@types/ItemContextType";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../@types/NavigationTypes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { queryUserFirestoreToken } from "../services/queryUserFirestoreToken";
+import { Item } from "../models/Item";
 
 const Auth = () => {
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [isLogin, setIsLogin] = useState(false);
-  const { token } = useContext(AuthContext) as AuthContextType;
+  const { userToken, authenticate } = useContext(
+    AuthContext
+  ) as AuthContextType;
+  const { addMoney } = useContext(MoneyContext) as MoneyContextType;
+  const { addCategories } = useContext(CategoryContext) as CategoryContextType;
+  const { addItems } = useContext(ItemContext) as ItemContextType;
   const [loading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   if (token) {
-  //     return navigation.navigate("AddMoney");
-  //   }
-  // }, [token]);
+  useEffect(() => {
+    if (userToken) {
+      async function fetchUserData() {
+        try {
+          setLoading(true);
+          const userFirestoreToken = await queryUserFirestoreToken(userToken);
+          const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data().data[getMonthDatabase()];
+            if (userData) {
+              addMoney(userData.money);
+              addCategories(userData.categories);
+              const items = userData.items.map((item: any) => {
+                console.log(item.description + ": " + new Date(item.data.toDate()))
+                return {
+                  ...item,
+                  data: item.data.toDate()
+                }
+              })
+              addItems(items);
+              navigation.navigate("Main");
+            } else {
+              await setDoc(
+                userDocRef,
+                {
+                  [`data.${getMonthDatabase()}`]: {
+                    money: 0,
+                    categories: [],
+                    items: [],
+                  },
+                },
+                { merge: true }
+              );
+              navigation.navigate("AddMoney");
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setLoading(false);
+        }
+      }
+      fetchUserData();
+    }
+  }, [userToken]);
+
+  useEffect(() => {
+    async function fetchLocalToken() {
+      const token = await AsyncStorage.getItem("token");
+      if (token) {
+        authenticate(token);
+      }
+    }
+    fetchLocalToken();
+  }, []);
 
   if (loading) return <Loading message="Entrando" />;
 
@@ -88,7 +160,7 @@ const styles = StyleSheet.create({
   form: {
     alignItems: "center",
     width: "90%",
-    elevation: 4
+    elevation: 4,
   },
   operation: {
     flexDirection: "row",
@@ -101,11 +173,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     backgroundColor: "#eee",
     borderTopLeftRadius: 4,
-    borderTopRightRadius: 4
+    borderTopRightRadius: 4,
   },
   operationButtonActive: {
     borderBottomWidth: 0,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
   },
   operationName: {
     textAlign: "center",

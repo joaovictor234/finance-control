@@ -23,20 +23,26 @@ import { Category } from "../models/Category";
 import CategoryItem from "../components/Categories/CategoryItem";
 import { formatToRawValue } from "../utils/formatToRawValue";
 import { formatToBRL } from "../utils/formatToBRL";
-import { doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../auth/firebaseConfig";
 import Loading from "../components/UI/Loading";
 import { getMonthDatabase } from "../utils/getMonthDatabase";
 import { MoneyContext } from "../context/MoneyContext";
 import { MoneyContextType } from "../@types/MoneyContextType";
+import { AuthContext } from "../context/AuthContext";
+import { AuthContextType } from "../@types/AuthContextType";
+import { sortItemsByData } from "../utils/sortItemsByData";
 
 const AddItem = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const { userFirestoreToken } = useContext(AuthContext) as AuthContextType;
   const { categories } = useContext(CategoryContext) as CategoryContextType;
   const { items, addItem } = useContext(ItemContext) as ItemContextType;
   const { money } = useContext(MoneyContext) as MoneyContextType;
 
-  const categoriesList = categories.map((category) => category.name);
+  const categoriesList = categories
+    .filter((category) => category.name !== "Total")
+    .map((category) => category.name);
   const [description, setDescription] = useState("");
   const [selectedCategoryName, setSelectedCategoryName] = useState("");
   const [date, setDate] = useState(new Date());
@@ -75,13 +81,13 @@ const AddItem = () => {
       value: value,
     };
     try {
-      const userRef = doc(FIREBASE_DB, "users", "7yg3Kubl2ckrNOnW31EF");
-      await updateDoc(userRef, getMonthDatabase(), {
-        items: [...items, newItem],
-        money,
-        categories,
-      });
+      const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
       addItem(newItem);
+      const allItems = [...items, newItem];
+      const sortedItemsByDate = sortItemsByData(allItems);
+      await updateDoc(userDocRef, {
+        [`data.${getMonthDatabase()}.items`]: sortedItemsByDate,
+      });
       navigation.navigate("Main", { screen: "Items" });
     } catch (error) {
       console.log(error);
@@ -126,14 +132,9 @@ const AddItem = () => {
           ))}
       </Picker>
       <CategoryItem category={selectedCategory} />
-      <Text style={styles.label}>Data</Text>
+      <Text style={[styles.label, { marginTop: 10 }]}>Data</Text>
       <View style={styles.pickData}>
-        <Input
-          style={styles.inputDate}
-          placeholder="DD/MM/YYYY"
-          keyboardType="number-pad"
-          value={date.toLocaleDateString("pt-BR")}
-        />
+        <Text style={styles.date}>{date.toLocaleDateString("pt-BR")}</Text>
         <Pressable style={styles.buttonPickDate} onPress={pickDataHandler}>
           <Ionicons
             name="calendar"
@@ -161,11 +162,13 @@ export default AddItem;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    backgroundColor: "#fff",
   },
   label: {
     backgroundColor: "#fff",
     borderRadius: 4,
-    paddingVertical: 4,
+    paddingVertical: 5,
+    marginHorizontal: 2,
     fontSize: Fonts.text,
     paddingHorizontal: 15,
     borderLeftColor: COLORS.primary100,
@@ -174,13 +177,17 @@ const styles = StyleSheet.create({
   },
   select: {
     backgroundColor: "#fff",
-    marginVertical: 10,
+    marginVertical: 15,
+    marginHorizontal: 2,
+    elevation: 4,
+    borderWidth: 2,
+    borderColor: COLORS.borderColor,
   },
   pickData: {
     display: "flex",
     flexDirection: "row",
   },
-  inputDate: {
+  date: {
     flex: 9,
     paddingVertical: 10,
     paddingHorizontal: 10,

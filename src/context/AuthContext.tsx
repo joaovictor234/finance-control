@@ -9,16 +9,18 @@ import {
 } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { getMonthDatabase } from "../utils/getMonthDatabase";
+import { queryUserFirestoreToken } from "../services/queryUserFirestoreToken";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const AuthContextProvider = ({ children }: ContextProps) => {
-  const [authToken, setAuthToken] = useState("");
+  const [userToken, setUserToken] = useState("");
+  const [userFirestoreToken, setUserFirestoreToken] = useState("");
   const auth = FIREBASE_AUTH;
 
   const authenticate = (token: string) => {
-    setAuthToken(token);
-    AsyncStorage.setItem("token", token);
+    setUserToken(token);
+    AsyncStorage.setItem("tokens", token);
   };
 
   const signup = async (email: string, password: string) => {
@@ -27,11 +29,14 @@ const AuthContextProvider = ({ children }: ContextProps) => {
         const token = userCredential.user.uid;
         authenticate(token);
         const monthCollection = getMonthDatabase();
-        addDoc(collection(FIREBASE_DB, "users", token), {
-          [monthCollection]: {
-            money: 0,
-            categories: [],
-            items: [],
+        addDoc(collection(FIREBASE_DB, "users"), {
+          userId: token,
+          data: {
+            [monthCollection]: {
+              money: 0,
+              categories: [],
+              items: [],
+            },
           },
         });
       })
@@ -54,20 +59,29 @@ const AuthContextProvider = ({ children }: ContextProps) => {
   };
 
   const logout = () => {
-    setAuthToken("");
+    setUserToken("");
     AsyncStorage.removeItem("token");
   };
 
-  useEffect(() => {}, [authToken, auth]);
+  useEffect(() => {
+    async function fetchUserFirestoreToken() {
+      if (userToken) {
+        const token = await queryUserFirestoreToken(userToken);
+        setUserFirestoreToken(token);
+      }
+    }
+    fetchUserFirestoreToken();
+  }, [userToken]);
 
   const value = {
-    token: authToken,
     auth,
-    isAuthenticated: !!authToken,
-    authenticate,
-    signup,
+    userToken,
+    userFirestoreToken,
+    isAuthenticated: !!userToken,
     login,
     logout,
+    signup,
+    authenticate,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
