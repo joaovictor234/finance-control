@@ -35,9 +35,8 @@ import { CategoryContext } from "../../context/CategoryContext";
 import { CategoryContextType } from "../../@types/CategoryContextType";
 import { ItemContext } from "../../context/ItemContext";
 import { ItemContextType } from "../../@types/ItemContextType";
-import { Item } from "../../models/Item";
 import { queryUserFirestoreToken } from "../../services/queryUserFirestoreToken";
-import { updateUserFirestore } from "../../services/updateUserFirestore";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 interface AuthFormProp {
   authType: "login" | "signup";
@@ -99,10 +98,10 @@ const AuthForm = ({ authType }: AuthFormProp) => {
     setLoading(false);
   };
 
-  /* useEffect(() => {
+  useEffect(() => {
     setEmail("");
     setPassword("");
-  }, [authType]); */
+  }, [authType]);
 
   if (loading)
     return (
@@ -145,16 +144,16 @@ export default AuthForm;
 
 const styles = StyleSheet.create({
   container: {
-    width: Dimensions.get("window").width * 0.9,
+    width: WIDTH_SCREEN * 0.9,
     borderColor: COLORS.borderColor,
     borderWidth: 2,
     borderTopWidth: 0,
-    padding: 10,
+    padding: HEIGHT_SCREEN / 100 * 2,
     borderRadius: 4,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
   },
   label: {
-    fontSize: 16,
+    fontSize: HEIGHT_SCREEN / 100 * 2.1,
   },
 });

@@ -8,6 +8,7 @@ import Button from "../UI/Button";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../@types/NavigationTypes";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 const LastItemsAdded = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -49,10 +50,12 @@ export default LastItemsAdded;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    paddingHorizontal: HEIGHT_SCREEN / 100 * 1,
+    paddingVertical: HEIGHT_SCREEN / 100 * 1
   },
   label: {
-    fontSize: 17,
+    fontSize: WIDTH_SCREEN / 100 * 4,
+    paddingVertical: HEIGHT_SCREEN / 100 * 1
   },
   list: {
     borderColor: COLORS.borderColor,
@@ -62,7 +65,7 @@ const styles = StyleSheet.create({
   },
   noItemsLabel: {
     textAlign: "center",
-    fontSize: 16,
+    fontSize: WIDTH_SCREEN / 100 * 4,
     marginVertical: 10,
   },
 });

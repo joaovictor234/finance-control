@@ -1,13 +1,6 @@
 import { useState, useEffect, useContext, createRef } from "react";
 
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  Modal,
-} from "react-native";
+import { View, Text, StyleSheet, TextInput, Pressable } from "react-native";
 import ModalCustomization from "./ModalCustomization";
 
 import { COLORS } from "../../constants/colors";
@@ -22,6 +15,7 @@ import { formatToBRL } from "../../utils/formatToBRL";
 import { formatToRawValue } from "../../utils/formatToRawValue";
 
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 interface AddCategoriesItemProps {
   category: Category;
@@ -70,13 +64,10 @@ const AddCategoriesItem = ({
 
   const updateCategoryHandle = () => {
     const updatedCategory: Category = {
-      id: category.id,
+      ...category,
       name: editCategoryName,
       color: categoryColor,
       icon: categoryIcon,
-      percentage: category.percentage,
-      totalRemaining: category.totalRemaining,
-      totalValue: category.totalValue,
     };
     updateCategory(updatedCategory);
     setEditeMode(false);
@@ -200,7 +191,13 @@ const AddCategoriesItem = ({
           </Pressable>
         </View>
         <View style={styles.categoryNameInput}>
-          <Pressable style={styles.category} onPress={openOptionsHandle}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.category,
+              pressed && styles.categoryNameButtonPressed,
+            ]}
+            onPress={openOptionsHandle}
+          >
             {editMode ? (
               <TextInput
                 style={styles.input}
@@ -222,7 +219,7 @@ const AddCategoriesItem = ({
           </Pressable>
           <View style={{ flexDirection: "row" }}>
             <View style={{ flex: 6 }}>
-              <Text>Valor</Text>
+              <Text style={styles.label}>Valor</Text>
               <TextInput
                 value={formatToBRL(category.totalValue)}
                 keyboardType="number-pad"
@@ -237,7 +234,7 @@ const AddCategoriesItem = ({
               />
             </View>
             <View style={{ flex: 3 }}>
-              <Text>Porcentagem</Text>
+              <Text style={styles.label}>Porcentagem</Text>
               <TextInput
                 keyboardType="number-pad"
                 value={formatToDecimalString(category.percentage * 100)}
@@ -275,8 +272,8 @@ export default AddCategoriesItem;
 const styles = StyleSheet.create({
   item: {
     borderWidth: 1,
-    padding: 5,
-    marginTop: 5,
+    padding: (HEIGHT_SCREEN / 100) * 0.5,
+    marginTop: (HEIGHT_SCREEN / 100) * 0.8,
     borderRadius: 5,
     borderLeftWidth: 8,
     flexDirection: "row",
@@ -293,11 +290,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 5,
+    paddingVertical: (HEIGHT_SCREEN / 100) * 1,
   },
   color: {
-    height: 20,
-    width: 20,
+    height: (WIDTH_SCREEN / 100) * 6,
+    width: (WIDTH_SCREEN / 100) * 6,
     borderColor: COLORS.borderColor,
     borderWidth: 4,
   },
@@ -305,23 +302,32 @@ const styles = StyleSheet.create({
     flex: 6,
   },
   categoryName: {
-    fontSize: 18,
+    fontSize: (HEIGHT_SCREEN / 100) * 2.5,
     fontWeight: "600",
   },
   category: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+    paddingVertical: (HEIGHT_SCREEN / 100) * 1,
+    paddingHorizontal: HEIGHT_SCREEN / 100 * 0.4,
+    borderRadius: 4
+  },
+  categoryNameButtonPressed: {
+    backgroundColor: "#ddd",
+  },
+  label: {
+    fontSize: (WIDTH_SCREEN / 100) * 3.5,
   },
   input: {
-    width: 100,
+    width: (WIDTH_SCREEN / 100) * 25,
     borderWidth: 1,
     paddingHorizontal: 5,
     paddingVertical: 2,
     borderRadius: 5,
   },
   inputValue: {
-    width: 180,
+    width: (WIDTH_SCREEN / 100) * 50,
     marginRight: 10,
   },
   focus: {

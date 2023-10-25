@@ -16,6 +16,8 @@ import AddItem from "./src/screens/AddItem";
 import { COLORS } from "./src/constants/colors";
 import ItemContextProvider from "./src/context/ItemContext";
 import AuthContextProvider from "./src/context/AuthContext";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "./src/constants/dimensions";
+import MonthYearContextProvider from "./src/context/MonthYearContext";
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -26,6 +28,9 @@ const Root = () => {
         screenOptions={{
           headerStyle: { backgroundColor: COLORS.primary100 },
           headerTintColor: COLORS.text,
+          headerTitleStyle: {
+            fontSize: (WIDTH_SCREEN / 100) * 5,
+          },
         }}
         initialRouteName={"Auth"}
       >
@@ -68,15 +73,17 @@ const Root = () => {
 export default function App() {
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
+      <StatusBar style="light" />
       <AuthContextProvider>
-        <MoneyContextProvider>
-          <CategoryContextProvider>
-            <ItemContextProvider>
-              <Root />
-            </ItemContextProvider>
-          </CategoryContextProvider>
-        </MoneyContextProvider>
+        <MonthYearContextProvider>
+          <MoneyContextProvider>
+            <CategoryContextProvider>
+              <ItemContextProvider>
+                <Root />
+              </ItemContextProvider>
+            </CategoryContextProvider>
+          </MoneyContextProvider>
+        </MonthYearContextProvider>
       </AuthContextProvider>
     </View>
   );

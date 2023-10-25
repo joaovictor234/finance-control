@@ -8,6 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { CategoryContext } from "../../context/CategoryContext";
 import { CategoryContextType } from "../../@types/CategoryContextType";
 import { Category } from "../../models/Category";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 interface IItemComponent {
   item: Item;
@@ -35,7 +36,7 @@ const ItemComponent = ({ item }: IItemComponent) => {
         >
           <Ionicons
             name={category ? category.icon : "star"}
-            size={24}
+            size={WIDTH_SCREEN / 100 * 6}
             style={[styles.emphasis, styles.iconCategory]}
           />
         </View>
@@ -52,7 +53,7 @@ const ItemComponent = ({ item }: IItemComponent) => {
       <View style={styles.detailsIcon}>
         <MaterialIcons
           name="keyboard-arrow-right"
-          size={24}
+          size={WIDTH_SCREEN / 100 * 6}
           color="black"
           style={styles.icon}
         />
@@ -67,27 +68,27 @@ const styles = StyleSheet.create({
   item: {
     display: "flex",
     flexDirection: "row",
-    paddingHorizontal: 5,
-    paddingVertical: 5,
-    marginHorizontal: 5,
-    marginVertical: 5,
+    paddingHorizontal: (HEIGHT_SCREEN / 100) * 0.5,
+    paddingVertical: (HEIGHT_SCREEN / 100) * 0.5,
+    marginHorizontal: (HEIGHT_SCREEN / 100) * 0.5,
+    marginVertical: (HEIGHT_SCREEN / 100) * 0.5,
     backgroundColor: "#fff",
     borderRadius: 5,
-    elevation: 4
+    elevation: 4,
   },
   iconContainer: {
-    padding: 5,
+    padding: (HEIGHT_SCREEN / 100) * 0.5,
     borderRadius: 20,
-    marginHorizontal: 5
+    marginHorizontal: 5,
   },
   iconCategory: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    color: "#fff"
+    color: "#fff",
   },
   text: {
-    fontSize: 16,
+    fontSize: WIDTH_SCREEN / 100 * 3.8,
   },
   description: {
     flex: 8,
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     paddingLeft: 5,
     borderLeftWidth: 1,
-    borderLeftColor: COLORS.borderColor
+    borderLeftColor: COLORS.borderColor,
   },
   category: {
     display: "flex",

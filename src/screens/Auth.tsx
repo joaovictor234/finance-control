@@ -1,5 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import AuthForm from "../components/Auth/Form";
 import { AuthContext } from "../context/AuthContext";
 import { AuthContextType } from "../@types/AuthContextType";
@@ -18,42 +25,46 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../@types/NavigationTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { queryUserFirestoreToken } from "../services/queryUserFirestoreToken";
-import { Item } from "../models/Item";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../constants/dimensions";
+import { MonthYearContext } from "../context/MonthYearContext";
+import { MonthYearContextType } from "../@types/MonthYearContextType";
 
 const Auth = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [isLogin, setIsLogin] = useState(false);
-  const { userToken, authenticate } = useContext(
+  const { userToken, userFirestoreToken, authenticate } = useContext(
     AuthContext
   ) as AuthContextType;
+  const { monthYear } = useContext(MonthYearContext) as MonthYearContextType;
   const { addMoney } = useContext(MoneyContext) as MoneyContextType;
   const { addCategories } = useContext(CategoryContext) as CategoryContextType;
   const { addItems } = useContext(ItemContext) as ItemContextType;
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (userToken) {
+    if (userToken && userFirestoreToken) {
       async function fetchUserData() {
         try {
           setLoading(true);
-          const userFirestoreToken = await queryUserFirestoreToken(userToken);
           const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
           const userDoc = await getDoc(userDocRef);
           if (userDoc.exists()) {
             const userData = userDoc.data().data[getMonthDatabase()];
             if (userData) {
-              addMoney(userData.money);
-              addCategories(userData.categories);
-              const items = userData.items.map((item: any) => {
-                console.log(item.description + ": " + new Date(item.data.toDate()))
-                return {
-                  ...item,
-                  data: item.data.toDate()
-                }
-              })
-              addItems(items);
-              navigation.navigate("Main");
+              if (userData.money === 0 || userData.categories.length === 0) {
+                navigation.navigate("AddMoney");
+              } else {
+                addMoney(userData.money);
+                addCategories(userData.categories);
+                const items = userData.items.map((item: any) => {
+                  return {
+                    ...item,
+                    data: new Date(item.data.toDate()),
+                  };
+                });
+                addItems(items);
+                navigation.navigate("Main");
+              }
             } else {
               await setDoc(
                 userDocRef,
@@ -70,14 +81,14 @@ const Auth = () => {
             }
           }
         } catch (error) {
-          console.log(error);
+          console.log("Auth: ", error);
         } finally {
           setLoading(false);
         }
       }
       fetchUserData();
     }
-  }, [userToken]);
+  }, [userToken, userFirestoreToken]);
 
   useEffect(() => {
     async function fetchLocalToken() {
@@ -144,22 +155,23 @@ export default Auth;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 25,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
   },
   image: {
-    height: 250,
-    width: 150,
+    height: HEIGHT_SCREEN / 4 + 20,
+    width: WIDTH_SCREEN / 4 + 40,
   },
   text: {
-    fontSize: 20,
-    marginVertical: 10,
+    fontSize: (HEIGHT_SCREEN / 100) * 3,
+    marginVertical: (HEIGHT_SCREEN / 100) * 2,
   },
   form: {
     alignItems: "center",
-    width: "90%",
+    width: WIDTH_SCREEN * 0.9,
     elevation: 4,
   },
   operation: {
@@ -168,7 +180,7 @@ const styles = StyleSheet.create({
   },
   operationButton: {
     flex: 1,
-    paddingVertical: 15,
+    paddingVertical: (HEIGHT_SCREEN / 100) * 2,
     borderColor: COLORS.borderColor,
     borderWidth: 2,
     backgroundColor: "#eee",
@@ -181,15 +193,15 @@ const styles = StyleSheet.create({
   },
   operationName: {
     textAlign: "center",
-    fontSize: 15,
+    fontSize: (HEIGHT_SCREEN / 100) * 1.8,
   },
   signUp: {
     display: "flex",
     flexDirection: "row",
-    marginTop: 15,
   },
   subText: {
-    fontSize: 16,
+    fontSize: (HEIGHT_SCREEN / 100) * 2.3,
+    marginVertical: (WIDTH_SCREEN / 100) * 1.5,
   },
   link: {
     color: "#168039",

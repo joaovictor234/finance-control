@@ -9,24 +9,21 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../@types/NavigationTypes";
 import { formatToBRL } from "../utils/formatToBRL";
 import { formatToRawValue } from "../utils/formatToRawValue";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../auth/firebaseConfig";
 import { getMonthDatabase } from "../utils/getMonthDatabase";
-import { CategoryContext } from "../context/CategoryContext";
-import { CategoryContextType } from "../@types/CategoryContextType";
-import { ItemContext } from "../context/ItemContext";
-import { ItemContextType } from "../@types/ItemContextType";
 import { AuthContext } from "../context/AuthContext";
 import { AuthContextType } from "../@types/AuthContextType";
-import { queryUserFirestoreToken } from "../services/queryUserFirestoreToken";
 import Loading from "../components/UI/Loading";
+import { MonthYearContext } from "../context/MonthYearContext";
+import { MonthYearContextType } from "../@types/MonthYearContextType";
+import { MoneyServices } from "../services/moneyServices";
 
 const AddMoney = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { userFirestoreToken } = useContext(AuthContext) as AuthContextType;
+  const { monthYear } = useContext(MonthYearContext) as MonthYearContextType;
   const moneyCtx = useContext(MoneyContext) as MoneyContextType;
-  const { items } = useContext(ItemContext) as ItemContextType;
-  const { categories } = useContext(CategoryContext) as CategoryContextType;
 
   const [money, setMoney] = useState(moneyCtx.money);
   const [moneyGreaterThanOne, setMoneyGreaterThanOne] = useState(false);
@@ -41,18 +38,28 @@ const AddMoney = () => {
     try {
       setLoading(true);
       const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
-      const monthData = {
-        money: money,
-        items,
-        categories,
-      };
-      await updateDoc(userDocRef, {
-        [`data.${getMonthDatabase()}`]: monthData,
-      });
-      moneyCtx.addMoney(money);
+      const selectedMonthYear = new Date(monthYear.year, monthYear.month, 0);
+      if (getMonthDatabase() === getMonthDatabase(selectedMonthYear)) {
+        MoneyServices.updateMoney(money, userFirestoreToken);
+        moneyCtx.addMoney(money);
+      } else {
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userMonthData =
+            userDoc.data().data[getMonthDatabase(selectedMonthYear)];
+          if (userMonthData) {
+            MoneyServices.updateMoney(
+              money,
+              userFirestoreToken,
+              selectedMonthYear
+            );
+          } else {
+          }
+        }
+      }
       navigation.navigate("AddCategories");
     } catch (error) {
-      console.log(error);
+      console.log("AddMoney: ", error);
     } finally {
       setLoading(false);
     }

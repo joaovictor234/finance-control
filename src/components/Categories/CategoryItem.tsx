@@ -3,6 +3,7 @@ import { Category } from "../../models/Category";
 import { COLORS } from "../../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 import { formatToBRL } from "../../utils/formatToBRL";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 interface CategoryProps {
   category: Category | null;
@@ -17,12 +18,12 @@ const CategoryItem = ({ category }: CategoryProps) => {
       ]}
     >
       <View style={styles.categoryContent}>
-        {/* <Ionicons
+        <Ionicons
           style={styles.icon}
           color={category ? category.color : COLORS.borderColor}
           name={category ? category.icon : "star"}
-          size={24}
-        /> */}
+          size={WIDTH_SCREEN / 100 * 6.5}
+        />
         <View style={{ flex: 1 }}>
           <Text style={styles.name}>
             {category ? category.name : "Categoria"}
@@ -70,10 +71,11 @@ export default CategoryItem;
 
 const styles = StyleSheet.create({
   categoryCard: {
-    borderLeftWidth: 10,
-    marginVertical: 5,
+    borderLeftWidth: WIDTH_SCREEN / 100 * 2.5,
     borderRadius: 5,
-    paddingHorizontal: 8,
+    marginVertical: HEIGHT_SCREEN / 100 * 0.7,
+    paddingHorizontal: HEIGHT_SCREEN / 100 * 0.5,
+    paddingVertical: HEIGHT_SCREEN / 100 * 0.1,
     borderTopColor: COLORS.borderColor,
     borderTopWidth: 1,
     borderRightColor: COLORS.borderColor,
@@ -88,19 +90,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   icon: {
-    paddingHorizontal: 5,
+    paddingHorizontal: HEIGHT_SCREEN / 100 * 0.5,
+    paddingVertical: HEIGHT_SCREEN / 100 * 1,
+    marginRight: HEIGHT_SCREEN / 100 * 1,
+    borderRightColor: COLORS.borderColor,
+    borderRightWidth: 1
   },
   name: {
-    fontSize: 18,
+    fontSize: WIDTH_SCREEN / 100 * 4,
   },
   barContainer: {
     backgroundColor: COLORS.borderColor,
-    marginVertical: 5,
+    marginVertical: HEIGHT_SCREEN / 100 * 0.5,
     borderRadius: 20,
   },
   barCategory: {
-    paddingVertical: 5,
-    paddingHorizontal: 5,
+    paddingVertical: HEIGHT_SCREEN / 100 * 0.8,
+    paddingHorizontal: HEIGHT_SCREEN / 100 * 1,
     borderRadius: 10,
   },
   amount: {

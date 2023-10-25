@@ -23,19 +23,12 @@ import { ItemContextType } from "../../@types/ItemContextType";
 import { AuthContext } from "../../context/AuthContext";
 import { AuthContextType } from "../../@types/AuthContextType";
 import Loading from "../UI/Loading";
-import { idGenerator } from "../../utils/idGenerator";
-import { Category } from "../../models/Category";
+import { HEIGHT_SCREEN } from "../../constants/dimensions";
 
 const AddCategoriesList = () => {
   const { userFirestoreToken } = useContext(AuthContext) as AuthContextType;
-  const {
-    categories,
-    calculateTotalPercentage,
-    calculateTotalValue,
-    addCategories,
-  } = useContext(CategoryContext) as CategoryContextType;
-  const { items } = useContext(ItemContext) as ItemContextType;
-  const { money } = useContext(MoneyContext) as MoneyContextType;
+  const { categories, calculateTotalPercentage, calculateTotalValue } =
+    useContext(CategoryContext) as CategoryContextType;
   const [selectedCategoryCardToEditId, setSelectedCategoryCardToEditId] =
     useState("");
   const [sumPercentagesAndValues, setSumPercentagesAndValues] = useState({
@@ -53,27 +46,12 @@ const AddCategoriesList = () => {
     try {
       setLoading(true);
       const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
-      const total: Category = {
-        id: idGenerator(),
-        name: "Total",
-        icon: "cube",
-        color: "#eee",
-        percentage: 1,
-        totalValue: money,
-        totalRemaining: money,
-      };
-      const monthData = {
-        money,
-        items,
-        categories: [total, ...categories],
-      };
       await updateDoc(userDocRef, {
-        [`data.${getMonthDatabase()}`]: monthData,
+        [`data.${getMonthDatabase()}.categories`]: categories,
       });
-      addCategories([total, ...categories]);
       navigation.navigate("Main");
     } catch (error) {
-      console.log(error);
+      console.log("AddCategoriesList: ", error);
     } finally {
       setLoading(false);
     }
@@ -131,10 +109,10 @@ export default AddCategoriesList;
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 10,
+    paddingHorizontal: (HEIGHT_SCREEN / 100) * 1,
   },
   listHeader: {
-    paddingTop: 20,
+    paddingTop: (HEIGHT_SCREEN / 100) * 1,
     flexDirection: "row",
     justifyContent: "space-between",
   },

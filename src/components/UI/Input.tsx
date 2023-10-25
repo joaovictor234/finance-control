@@ -1,6 +1,7 @@
 import { StyleSheet, TextInput, TextInputProps } from "react-native";
 import { COLORS } from "../../constants/colors";
 import { useState } from "react";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 const Input = (props: TextInputProps) => {
   const [focus, setFocus] = useState(false);
@@ -19,12 +20,12 @@ export default Input;
 
 const styles = StyleSheet.create({
   input: {
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: HEIGHT_SCREEN / 100 * 1,
+    paddingHorizontal: WIDTH_SCREEN / 100 * 2,
     borderWidth: 1,
     borderRadius: 5,
     marginVertical: 10,
-    fontSize: 18,
+    fontSize: HEIGHT_SCREEN / 100 * 2.5,
     backgroundColor: "#eee",
   },
   inputFocus: {

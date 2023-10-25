@@ -1,10 +1,10 @@
 import { Text, View, StyleSheet } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { useContext, useEffect, useState } from "react";
 import { CategoryContext } from "../../context/CategoryContext";
 import { CategoryContextType } from "../../@types/CategoryContextType";
 import { formatToBRL } from "../../utils/formatToBRL";
 import { COLORS } from "../../constants/colors";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 const Currency = () => {
   const { categories, calculateTotalValue, calculateTotalRemaining } =
@@ -42,12 +42,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 10,
+    marginTop: HEIGHT_SCREEN / 100 * 1,
   },
   valueContainer: {
-    padding: 10,
-    marginHorizontal: 10,
-    borderRadius: 10,
+    padding: HEIGHT_SCREEN / 100 * 1.3,
+    marginHorizontal: WIDTH_SCREEN / 100 * 2,
+    borderRadius: 5,
     display: "flex"
   },
   spent: {
@@ -59,11 +59,11 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary50,
   },
   legend: {
-    fontSize: 18,
+    fontSize: WIDTH_SCREEN / 100 * 4,
     color: "#fff",
   },
   value: {
-    fontSize: 22,
+    fontSize: WIDTH_SCREEN / 100 * 5,
     color: "#fff",
     fontWeight: "bold",
   },

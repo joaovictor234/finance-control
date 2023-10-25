@@ -23,7 +23,7 @@ import { Category } from "../models/Category";
 import CategoryItem from "../components/Categories/CategoryItem";
 import { formatToRawValue } from "../utils/formatToRawValue";
 import { formatToBRL } from "../utils/formatToBRL";
-import { arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
 import { FIREBASE_DB } from "../auth/firebaseConfig";
 import Loading from "../components/UI/Loading";
 import { getMonthDatabase } from "../utils/getMonthDatabase";
@@ -31,14 +31,13 @@ import { MoneyContext } from "../context/MoneyContext";
 import { MoneyContextType } from "../@types/MoneyContextType";
 import { AuthContext } from "../context/AuthContext";
 import { AuthContextType } from "../@types/AuthContextType";
-import { sortItemsByData } from "../utils/sortItemsByData";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../constants/dimensions";
 
 const AddItem = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const { userFirestoreToken } = useContext(AuthContext) as AuthContextType;
   const { categories } = useContext(CategoryContext) as CategoryContextType;
-  const { items, addItem } = useContext(ItemContext) as ItemContextType;
-  const { money } = useContext(MoneyContext) as MoneyContextType;
+  const { addItem } = useContext(ItemContext) as ItemContextType;
 
   const categoriesList = categories
     .filter((category) => category.name !== "Total")
@@ -82,15 +81,33 @@ const AddItem = () => {
     };
     try {
       const userDocRef = doc(FIREBASE_DB, "users", userFirestoreToken);
-      addItem(newItem);
-      const allItems = [...items, newItem];
-      const sortedItemsByDate = sortItemsByData(allItems);
-      await updateDoc(userDocRef, {
-        [`data.${getMonthDatabase()}.items`]: sortedItemsByDate,
-      });
+      if(getMonthDatabase(date) === getMonthDatabase()) {
+        await updateDoc(userDocRef, {
+          [`data.${getMonthDatabase()}.items`]: arrayUnion(newItem),
+        });
+        const updatedCategory = await addItem(newItem);
+  
+        const updatedCategories = categories.map((c) =>
+          c.id === updatedCategory.id ? updatedCategory : c
+        );
+  
+        await updateDoc(userDocRef, {
+          [`data.${getMonthDatabase()}.categories`]: updatedCategories,
+        });
+      } else {
+        const userDoc = await getDoc(userDocRef);
+        if(userDoc.exists()) {
+          const userMonthData = userDoc.data().data[getMonthDatabase(date)];
+          if(userMonthData) {
+
+            
+          }
+        }
+      }
+
       navigation.navigate("Main", { screen: "Items" });
     } catch (error) {
-      console.log(error);
+      console.log("AddItem: ", error);
     } finally {
       setLoading(false);
     }
@@ -134,7 +151,13 @@ const AddItem = () => {
       <CategoryItem category={selectedCategory} />
       <Text style={[styles.label, { marginTop: 10 }]}>Data</Text>
       <View style={styles.pickData}>
-        <Text style={styles.date}>{date.toLocaleDateString("pt-BR")}</Text>
+        <Text style={styles.date}>
+          {new Intl.DateTimeFormat("pt-BR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          }).format(date)}
+        </Text>
         <Pressable style={styles.buttonPickDate} onPress={pickDataHandler}>
           <Ionicons
             name="calendar"
@@ -161,23 +184,23 @@ export default AddItem;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: (HEIGHT_SCREEN / 100) * 1,
     backgroundColor: "#fff",
   },
   label: {
     backgroundColor: "#fff",
     borderRadius: 4,
-    paddingVertical: 5,
+    paddingVertical: (WIDTH_SCREEN / 100) * 2,
     marginHorizontal: 2,
-    fontSize: Fonts.text,
-    paddingHorizontal: 15,
+    fontSize: (WIDTH_SCREEN / 100) * 4,
+    paddingHorizontal: (WIDTH_SCREEN / 100) * 5,
     borderLeftColor: COLORS.primary100,
     borderLeftWidth: 10,
     elevation: 4,
   },
   select: {
     backgroundColor: "#fff",
-    marginVertical: 15,
+    marginVertical: (WIDTH_SCREEN / 100) * 3,
     marginHorizontal: 2,
     elevation: 4,
     borderWidth: 2,
@@ -189,15 +212,15 @@ const styles = StyleSheet.create({
   },
   date: {
     flex: 9,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: (WIDTH_SCREEN / 100) * 3,
+    paddingHorizontal: (WIDTH_SCREEN / 100) * 3,
     borderWidth: 1,
     borderRadius: 5,
     borderTopRightRadius: 0,
     borderBottomRightRadius: 0,
     borderRightWidth: 0,
     marginVertical: 10,
-    fontSize: 18,
+    fontSize: (WIDTH_SCREEN / 100) * 5,
     backgroundColor: COLORS.secondary50,
   },
   buttonPickDate: {

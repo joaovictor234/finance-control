@@ -1,13 +1,16 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { CategoryContextType } from "../@types/CategoryContextType";
 import { Category } from "../models/Category";
-import { CATEGORY_COLORS } from "../constants/colors";
+import { CATEGORY_COLORS, COLORS } from "../constants/colors";
 import { ICONS } from "../constants/icons";
 import { ContextProps } from "../interface/ContextProps";
+import { AuthContext } from "./AuthContext";
+import { AuthContextType } from "../@types/AuthContextType";
 
 export const CategoryContext = createContext<CategoryContextType | null>(null);
 
 const CategoryContextProvider = ({ children }: ContextProps) => {
+  const { userToken } = useContext(AuthContext) as AuthContextType;
   const [categories, setCategories] = useState<Category[]>([]);
   const [colors, setColors] = useState<string[]>(
     Object.values(CATEGORY_COLORS)
@@ -27,15 +30,8 @@ const CategoryContextProvider = ({ children }: ContextProps) => {
     setCategories((currCategories) => [...currCategories, category]);
   };
 
-  const addCategories = (c: Category[]) => {
-    const [totalCategory] = c.filter((category) => category.name === "Total");
-    const allCategories = c.filter((category) => category.name !== "Total");
-    const totalRemaining = allCategories.reduce(
-      (acc, category) => acc + category.totalRemaining,
-      0
-    );
-    totalCategory.totalRemaining = totalRemaining;
-    setCategories([totalCategory, ...allCategories]);
+  const addCategories = (category: Category[]) => {
+    setCategories(category);
   };
 
   const removeCategory = (id: string) => {
@@ -98,48 +94,27 @@ const CategoryContextProvider = ({ children }: ContextProps) => {
   };
 
   const calculateTotalPercentage = () => {
-    const categoriesLessTotalCategory = categories.slice(1);
-    const totalPercentage = categoriesLessTotalCategory.reduce(
-      (acc, category) => acc + category.percentage,
-      0
+    return (
+      categories.reduce((acc, category) => acc + category.percentage, 0) * 100
     );
-    return totalPercentage * 100;
   };
 
   const calculateTotalValue = () => {
-    const categoriesLessTotalCategory = categories.slice(1);
-    const totalValue = categoriesLessTotalCategory.reduce(
-      (acc, category) => acc + category.totalValue,
-      0
-    );
-    return totalValue;
+    return categories.reduce((acc, category) => acc + category.totalValue, 0);
   };
 
   const calculateTotalRemaining = () => {
-    const categoriesLessTotalCategory = categories.slice(1);
-    const totalRemaining = categoriesLessTotalCategory.reduce(
+    return categories.reduce(
       (acc, category) => acc + category.totalRemaining,
       0
     );
-    return totalRemaining;
   };
 
   useEffect(() => {
-    const [totalCategory] = categories.filter(
-      (category) => category.name === "Total"
-    );
-    const allCategories = categories.filter(
-      (category) => category.name !== "Total"
-    );
-    const updatedTotalCategory: Category = {
-      ...totalCategory,
-      totalRemaining: allCategories.reduce(
-        (acc, category) => acc + category.totalRemaining,
-        0
-      ),
-    };
-    setCategories([updatedTotalCategory, ...allCategories]);
-  }, [categories]);
+    if (!userToken) {
+      setCategories([]);
+    }
+  }, [userToken]);
 
   const value = {
     icons,

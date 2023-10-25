@@ -14,6 +14,7 @@ import { queryMonthItems } from "../../services/queryMonthItems";
 import { AuthContext } from "../../context/AuthContext";
 import { AuthContextType } from "../../@types/AuthContextType";
 import Loading from "./Loading";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 const months = [
   "Janeiro",
@@ -80,7 +81,11 @@ const MonthChanger = ({ setLoading }: MonthChangerProps) => {
           pressed && styles.iconButtonPressed,
         ]}
       >
-        <MaterialIcons size={30} color="#fff" name="keyboard-arrow-left" />
+        <MaterialIcons
+          size={(WIDTH_SCREEN / 100) * 8}
+          color="#fff"
+          name="keyboard-arrow-left"
+        />
       </Pressable>
       <Text style={styles.month}>
         {months[selectedDate.month]} {selectedDate.year}
@@ -92,7 +97,11 @@ const MonthChanger = ({ setLoading }: MonthChangerProps) => {
           pressed && styles.iconButtonPressed,
         ]}
       >
-        <MaterialIcons color="#fff" name="keyboard-arrow-right" size={30} />
+        <MaterialIcons
+          color="#fff"
+          name="keyboard-arrow-right"
+          size={(WIDTH_SCREEN / 100) * 8}
+        />
       </Pressable>
     </View>
   );
@@ -103,7 +112,7 @@ export default MonthChanger;
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    padding: 10,
+    padding: (HEIGHT_SCREEN / 100) * 2,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -114,7 +123,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    elevation: 10,
+    elevation: 4,
   },
   iconButtonPressed: {
     elevation: 0,
@@ -122,7 +131,7 @@ const styles = StyleSheet.create({
   },
   month: {
     flex: 4,
-    fontSize: 20,
+    fontSize: (WIDTH_SCREEN / 100) * 5,
     textAlign: "center",
   },
 });

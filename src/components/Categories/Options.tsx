@@ -5,6 +5,7 @@ import Button from "../UI/Button";
 import { Fonts } from "../../constants/fonts";
 
 import { SimpleLineIcons, Ionicons } from "@expo/vector-icons";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 interface ICategoriesOptions {
   editMode: boolean;
@@ -87,8 +88,8 @@ export default CategoryOptions;
 const styles = StyleSheet.create({
   options: {
     flexDirection: "row",
-    paddingHorizontal: 5,
-    padding: 5,
+    paddingHorizontal: WIDTH_SCREEN / 100 * 2,
+    paddingVertical: HEIGHT_SCREEN / 100 * 1,
     marginHorizontal: 5,
     borderWidth: 1,
     borderColor: COLORS.borderColor,

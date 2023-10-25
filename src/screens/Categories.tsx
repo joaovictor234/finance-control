@@ -6,13 +6,13 @@ import { useContext, useEffect, useState } from "react";
 import { Category } from "../models/Category";
 import { CategoryContext } from "../context/CategoryContext";
 import { CategoryContextType } from "../@types/CategoryContextType";
+import { HEIGHT_SCREEN } from "../constants/dimensions";
 
 const Categories = () => {
   const {categories} = useContext(CategoryContext) as CategoryContextType;
   const [localCategories, setLocalCategories] = useState<Category[]>([]);
 
   useEffect(() => {
-    console.log(categories)
     setLocalCategories(categories);
   }, [categories]);
 
@@ -32,8 +32,8 @@ export default Categories;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingVertical: HEIGHT_SCREEN / 100 * 0.5,
+    paddingHorizontal: HEIGHT_SCREEN / 100 * 1,
     backgroundColor: "#fff",
     paddingBottom: 50,
   },

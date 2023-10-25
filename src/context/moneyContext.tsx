@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { MoneyContextType } from "../@types/MoneyContextType";
 import { ContextProps } from "../interface/ContextProps";
 import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
@@ -12,7 +12,7 @@ export const MoneyContext = createContext<MoneyContextType | null>(null);
 
 const MoneyContextProvider = ({ children }: ContextProps) => {
   const [money, setMoney] = useState(0);
-  const { token } = useContext(AuthContext) as AuthContextType;
+  const { userToken } = useContext(AuthContext) as AuthContextType;
 
   const addMoney = async (value: number) => {
     if (value) setMoney(value);
@@ -21,6 +21,10 @@ const MoneyContextProvider = ({ children }: ContextProps) => {
   const resetMoney = () => {
     setMoney(0);
   };
+
+  useEffect(() => {
+    if (!userToken) resetMoney();
+  }, [userToken]);
 
   return (
     <MoneyContext.Provider value={{ money, addMoney, resetMoney }}>

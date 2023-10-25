@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, ButtonProps } from "react-native";
 import { COLORS } from "../../constants/colors";
-import { Fonts } from "../../constants/fonts";
+import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../../constants/dimensions";
 
 interface IButton extends ButtonProps {
   children: ReactNode;
@@ -10,15 +10,15 @@ interface IButton extends ButtonProps {
 const Button = ({ children, onPress, disabled, color }: IButton) => {
   const styles = StyleSheet.create({
     button: {
-      paddingVertical: 10,
-      paddingHorizontal: 20,
+      paddingVertical: WIDTH_SCREEN / 100 * 2.5,
+      paddingHorizontal: WIDTH_SCREEN / 100 * 2.5,
       backgroundColor: color ? color : COLORS.primary100,
       borderRadius: 5,
-      elevation: 10,
+      elevation: 4,
     },
     text: {
       color: COLORS.text,
-      fontSize: Fonts.text,
+      fontSize: WIDTH_SCREEN / 100 * 4,
       textAlign: "center",
     },
     disabled: {

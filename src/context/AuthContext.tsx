@@ -20,7 +20,7 @@ const AuthContextProvider = ({ children }: ContextProps) => {
 
   const authenticate = (token: string) => {
     setUserToken(token);
-    AsyncStorage.setItem("tokens", token);
+    AsyncStorage.setItem("token", token);
   };
 
   const signup = async (email: string, password: string) => {
@@ -38,7 +38,7 @@ const AuthContextProvider = ({ children }: ContextProps) => {
               items: [],
             },
           },
-        });
+        }).then((response) => setUserFirestoreToken(response.id));
       })
       .catch((error) => {
         const errorCode = error.code;
@@ -60,6 +60,7 @@ const AuthContextProvider = ({ children }: ContextProps) => {
 
   const logout = () => {
     setUserToken("");
+    setUserFirestoreToken("");
     AsyncStorage.removeItem("token");
   };
 
