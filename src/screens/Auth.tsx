@@ -28,6 +28,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { HEIGHT_SCREEN, WIDTH_SCREEN } from "../constants/dimensions";
 import { MonthYearContext } from "../context/MonthYearContext";
 import { MonthYearContextType } from "../@types/MonthYearContextType";
+import { DatabaseService } from "../services/databaseService";
 
 const Auth = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
@@ -66,17 +67,7 @@ const Auth = () => {
                 navigation.navigate("Main");
               }
             } else {
-              await setDoc(
-                userDocRef,
-                {
-                  [`data.${getMonthDatabase()}`]: {
-                    money: 0,
-                    categories: [],
-                    items: [],
-                  },
-                },
-                { merge: true }
-              );
+              DatabaseService.createNewMonthData(userDocRef);
               navigation.navigate("AddMoney");
             }
           }
